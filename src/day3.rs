@@ -14,9 +14,9 @@ struct LifeStats {
 
 #[derive(thiserror::Error, Debug)]
 enum Error {
-    #[error("data store disconnected")]
+    #[error("empty input")]
     EmptyInput,
-    #[error("data store disconnectedd")]
+    #[error("unknown char")]
     UnknownChar(char),
     #[error("No Rating")]
     CalculateRatingFailed,
@@ -70,18 +70,19 @@ fn parse_oxygen_and_co2(r: impl Read) -> Result<LifeStats, Box<dyn std::error::E
     let all: Result<Vec<_>, Box<dyn std::error::Error>> =
         peekable.map(|l| Ok(u32::from_str_radix(&l?, 2)?)).collect();
     let data = &mut all?[..];
-    
-    let oxygen = generate_rating(line_len, data, |a,b| a > b)?;
-    let co2 = generate_rating(line_len, data, |a,b| a <= b)?;
 
-    Ok(LifeStats {
-        oxygen,
-        co2
-    })    
+    let oxygen = generate_rating(line_len, data, |a, b| a > b)?;
+    let co2 = generate_rating(line_len, data, |a, b| a <= b)?;
+
+    Ok(LifeStats { oxygen, co2 })
 }
 
 /// Determiner: Fn(count_zeros, count_ones) -> take_zeros?
-fn generate_rating(line_len: usize, data: &mut [u32], determiner: impl Fn(usize,usize)-> bool) -> Result<u32, Box<dyn std::error::Error>> {
+fn generate_rating(
+    line_len: usize,
+    data: &mut [u32],
+    determiner: impl Fn(usize, usize) -> bool,
+) -> Result<u32, Box<dyn std::error::Error>> {
     let result = (0..line_len).rev().fold_while(data, |acc, shifts| {
         // dbg!("{:?}", acc.iter().map(|f| format!("{:b}", f)).collect::<Vec<_>>());
         let next = partition_by_digit(acc, shifts, &determiner);
@@ -93,13 +94,17 @@ fn generate_rating(line_len: usize, data: &mut [u32], determiner: impl Fn(usize,
     });
     match result {
         FoldWhile::Continue(_) => Err(Error::CalculateRatingFailed)?,
-        FoldWhile::Done(x) => {
-            Ok(*x.first().expect("FoldWhile::Done only returns Done if slice.len() == 1"))
-        }
+        FoldWhile::Done(x) => Ok(*x
+            .first()
+            .expect("FoldWhile::Done only returns Done if slice.len() == 1")),
     }
 }
 
-fn partition_by_digit<'a>(data: &'a mut [u32], shifts: usize, determiner: &impl Fn(usize,usize)-> bool) -> &'a mut [u32] {
+fn partition_by_digit<'a>(
+    data: &'a mut [u32],
+    shifts: usize,
+    determiner: &impl Fn(usize, usize) -> bool,
+) -> &'a mut [u32] {
     let pos = itertools::partition(data.iter_mut(), |x| ((*x >> shifts) & 1) == 0);
     let (a, b) = data.split_at_mut(pos);
     if (determiner)(a.len(), b.len()) {
@@ -136,7 +141,7 @@ mod tests {
     }
 
     #[test]
-    fn part2() {        
+    fn part2() {
         let input = std::fs::File::open("puzzleData/day3.txt").unwrap();
         let result = super::parse_oxygen_and_co2(input).unwrap();
         assert_eq!(4273224, result.oxygen * result.co2);
@@ -145,7 +150,7 @@ mod tests {
     #[test]
     fn partition_test() {
         let mut raw = [0b1100, 0b0101, 0b1000, 0b0000];
-        let partition = super::partition_by_digit(&mut raw[..], 3, &|a,b| a >= b);
+        let partition = super::partition_by_digit(&mut raw[..], 3, &|a, b| a >= b);
         assert_eq!(2, partition.len());
     }
 }
