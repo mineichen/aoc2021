@@ -11,18 +11,17 @@ fn count_horizontal_and_vertical_intersections(
     r: impl Read,
 ) -> Result<u32, Box<dyn std::error::Error>> {
     process_results(parse(r), |lines| {
-        count_intersections(lines.filter(|l| l.is_horizontal_or_vertical()))
+        count_intersections(lines.filter(|l| l.is_horizontal_or_vertical()).collect())
     })
 }
 
 fn count_all_intersections(r: impl Read) -> Result<u32, Box<dyn std::error::Error>> {
-    process_results(parse(r), |lines| count_intersections(lines))
+    process_results(parse(r), |lines| count_intersections(lines.collect()))
 }
 
-fn count_intersections(lines: impl Iterator<Item = Line>) -> u32 {
-    let lines = lines.collect::<Vec<_>>();
+fn count_intersections(lines: Vec<Line>) -> u32 {
     let max = get_max(lines.iter().copied());
-    let x_bound = (max.x + 1);
+    let x_bound = max.x + 1;
     let mut field = vec![0; (x_bound * (max.y + 1)) as usize];
     for line in lines.into_iter() {
         let x_incr = match line.0.x.cmp(&line.1.x) {
