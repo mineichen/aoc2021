@@ -1,22 +1,21 @@
-fn parse(input: &str) -> Result<Simulation, Box<dyn std::error::Error>>{
-    let r: Result<Vec<u8>, Box<dyn std::error::Error>> = input.split(',').map(|e| Ok(e.parse()?)).collect();
+fn parse(input: &str) -> Result<Simulation, Box<dyn std::error::Error>> {
+    let r: Result<Vec<u8>, Box<dyn std::error::Error>> =
+        input.split(',').map(|e| Ok(e.parse()?)).collect();
     Ok(Simulation::new(r?))
 }
 
 struct Simulation {
-    fishes: [u64;9]
+    fishes: [u64; 9],
 }
 
 impl Simulation {
-    fn new(state: impl IntoIterator<Item=u8>) -> Self {
+    fn new(state: impl IntoIterator<Item = u8>) -> Self {
         let mut fishes = [0u64; 9];
 
         for time in state.into_iter() {
             fishes[time as usize] += 1;
         }
-        Self {
-            fishes
-        }
+        Self { fishes }
     }
     fn step(&mut self) {
         self.fishes.rotate_left(1);
