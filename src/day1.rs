@@ -65,7 +65,10 @@ mod tests {
     const TEST_INPUT: [usize; 10] = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
     #[test]
     fn input_part1() {
-        assert_eq!(1688, super::count_increments_in_file("puzzleData\\day1.txt").unwrap());
+        assert_eq!(
+            1688,
+            super::count_increments_in_file("puzzleData\\day1.txt").unwrap()
+        );
     }
     #[test]
     fn test_input_part1() {
@@ -79,6 +82,9 @@ mod tests {
 
     #[test]
     fn input_part2() {
-        assert_eq!(1728, super::count_window_increments_in_file("puzzleData\\day1.txt").unwrap())
+        assert_eq!(
+            1728,
+            super::count_window_increments_in_file("puzzleData\\day1.txt").unwrap()
+        )
     }
 }

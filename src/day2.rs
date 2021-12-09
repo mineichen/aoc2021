@@ -6,9 +6,8 @@ use simple_lines::ReadExt;
 enum Command {
     Up(i32),
     Down(i32),
-    Forward(i32)
+    Forward(i32),
 }
-
 
 #[derive(thiserror::Error, Debug)]
 enum Error {
@@ -17,34 +16,38 @@ enum Error {
     #[error("Not enough arguments")]
     InvalidNumberOfArguments(&'static str),
     #[error("Not enough arguments")]
-    ValueIsNotANumber()
+    ValueIsNotANumber(),
 }
-
 
 impl FromStr for Command {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parts = s.split(' ');
-        let command = parts.next().ok_or(Error::InvalidNumberOfArguments("command"))?;
-        let number = parts.next().ok_or(Error::InvalidNumberOfArguments("number"))?.parse().map_err(|_| Error::ValueIsNotANumber())?;
+        let command = parts
+            .next()
+            .ok_or(Error::InvalidNumberOfArguments("command"))?;
+        let number = parts
+            .next()
+            .ok_or(Error::InvalidNumberOfArguments("number"))?
+            .parse()
+            .map_err(|_| Error::ValueIsNotANumber())?;
         match command {
             "forward" => Ok(Command::Forward(number)),
             "up" => Ok(Command::Up(number)),
             "down" => Ok(Command::Down(number)),
-            _ => Err(Error::ParseCommand(command.to_owned()).into())
+            _ => Err(Error::ParseCommand(command.to_owned()).into()),
         }
     }
 }
 
-
 #[derive(Debug, Default)]
 struct Position {
     x: i32,
-    y: i32
+    y: i32,
 }
 
-fn navigate(input: impl Iterator<Item=Command>) -> Position {
+fn navigate(input: impl Iterator<Item = Command>) -> Position {
     let mut position = Position::default();
 
     for command in input {
@@ -67,10 +70,10 @@ fn navigate_reader(input: impl Read) -> Result<Position, Box<dyn std::error::Err
 struct PositionV2 {
     x: i32,
     y: i32,
-    aim: i32
+    aim: i32,
 }
 
-fn navigate_v2(input: impl Iterator<Item=Command>) -> PositionV2 {
+fn navigate_v2(input: impl Iterator<Item = Command>) -> PositionV2 {
     let mut position = PositionV2::default();
     for command in input {
         match command {
@@ -79,7 +82,7 @@ fn navigate_v2(input: impl Iterator<Item=Command>) -> PositionV2 {
             Command::Forward(x) => {
                 position.x += x;
                 position.y += position.aim * x;
-            },
+            }
         }
     }
     position
@@ -93,7 +96,7 @@ fn navigate_reader_v2(input: impl Read) -> Result<PositionV2, Box<dyn std::error
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{io::Cursor, fs::File};
+    use std::{fs::File, io::Cursor};
 
     #[test]
     fn test_part1() {

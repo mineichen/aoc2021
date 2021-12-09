@@ -21,8 +21,6 @@ fn count_unique(r: impl Read) -> Result<u32, Box<dyn std::error::Error>> {
     })?)
 }
 
-
-
 const tiles: [u8; 10] = [
     Tile::Top as u8 //0
         | Tile::TopLeft as u8
@@ -86,7 +84,7 @@ fn number_from_tiles(input: u8) -> Option<u8> {
 }
 
 fn solve(permutations: &str, input: &str) -> u64 {
-    let mut map : HashMap<char, usize> = HashMap::new();
+    let mut map: HashMap<char, usize> = HashMap::new();
     let mut four = "";
     let mut one = "";
     let mut seven = "";
@@ -104,28 +102,52 @@ fn solve(permutations: &str, input: &str) -> u64 {
         }
     }
 
-    let mut solutions = map.iter().filter_map(|(char, count)| match count {
-        4 => Some((*char, Tile::BottomLeft)),
-        6 => Some((*char, Tile::TopLeft)),
-        9 => Some((*char, Tile::BottomRight)),
-        _ => None
-    }).collect::<HashMap<_,_>>();
+    let mut solutions = map
+        .iter()
+        .filter_map(|(char, count)| match count {
+            4 => Some((*char, Tile::BottomLeft)),
+            6 => Some((*char, Tile::TopLeft)),
+            9 => Some((*char, Tile::BottomRight)),
+            _ => None,
+        })
+        .collect::<HashMap<_, _>>();
 
-    let top_right = one.chars().filter(|c| !solutions.contains_key(c)).next().unwrap();
+    let top_right = one
+        .chars()
+        .filter(|c| !solutions.contains_key(c))
+        .next()
+        .unwrap();
     solutions.insert(top_right, Tile::TopRight);
-    let center_char = four.chars().filter(|c| !solutions.contains_key(c)).next().unwrap();
+    let center_char = four
+        .chars()
+        .filter(|c| !solutions.contains_key(c))
+        .next()
+        .unwrap();
     solutions.insert(center_char, Tile::Center);
-    let top_char = seven.chars().filter(|c| !solutions.contains_key(c)).next().unwrap();
+    let top_char = seven
+        .chars()
+        .filter(|c| !solutions.contains_key(c))
+        .next()
+        .unwrap();
     solutions.insert(top_char, Tile::Top);
-    let bottom_char = eight.chars().filter(|c| !solutions.contains_key(c)).next().unwrap();
+    let bottom_char = eight
+        .chars()
+        .filter(|c| !solutions.contains_key(c))
+        .next()
+        .unwrap();
     solutions.insert(bottom_char, Tile::Bottom);
 
-
-    input.split(' ').map(|digit| {
-        number_from_tiles(digit.chars().fold(0, |acc, c| acc | *solutions.get(&c).unwrap() as u8)).unwrap() as u64
-    }).fold(0, |acc, n| {
-        acc * 10 + n
-    })
+    input
+        .split(' ')
+        .map(|digit| {
+            number_from_tiles(
+                digit
+                    .chars()
+                    .fold(0, |acc, c| acc | *solutions.get(&c).unwrap() as u8),
+            )
+            .unwrap() as u64
+        })
+        .fold(0, |acc, n| acc * 10 + n)
 }
 
 #[cfg(test)]
@@ -151,13 +173,15 @@ mod tests {
     fn part2() {
         assert_eq!(
             1073431,
-            std::fs::File::open("puzzleData/day8.txt").unwrap()
+            std::fs::File::open("puzzleData/day8.txt")
+                .unwrap()
                 .lines_rc()
                 .map(|line| {
                     let line = line.unwrap();
                     let mut parts = line.split(" | ");
                     solve(parts.next().unwrap(), parts.next().unwrap())
-                }).sum::<u64>()
+                })
+                .sum::<u64>()
         )
     }
 
@@ -172,87 +196,100 @@ mod tests {
     fn number_from_tiles_match() {
         assert_eq!(
             Some(0),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopLeft as u8
-                | Tile::TopRight as u8
-                | Tile::BottomLeft as u8
-                | Tile::BottomRight as u8
-                | Tile::Bottom as u8)
+            number_from_tiles(
+                Tile::Top as u8
+                    | Tile::TopLeft as u8
+                    | Tile::TopRight as u8
+                    | Tile::BottomLeft as u8
+                    | Tile::BottomRight as u8
+                    | Tile::Bottom as u8
+            )
         );
 
         assert_eq!(
             Some(1),
-            number_from_tiles(Tile::TopRight as u8
-                | Tile::BottomRight as u8)
+            number_from_tiles(Tile::TopRight as u8 | Tile::BottomRight as u8)
         );
         assert_eq!(
             Some(2),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopRight as u8
-                | Tile::Center as u8
-                | Tile::BottomLeft as u8
-                | Tile::Bottom as u8)
+            number_from_tiles(
+                Tile::Top as u8
+                    | Tile::TopRight as u8
+                    | Tile::Center as u8
+                    | Tile::BottomLeft as u8
+                    | Tile::Bottom as u8
+            )
         );
         assert_eq!(
             Some(3),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopRight as u8
-                | Tile::Center as u8
-                | Tile::BottomRight as u8
-                | Tile::Bottom as u8)
+            number_from_tiles(
+                Tile::Top as u8
+                    | Tile::TopRight as u8
+                    | Tile::Center as u8
+                    | Tile::BottomRight as u8
+                    | Tile::Bottom as u8
+            )
         );
 
         assert_eq!(
             Some(4),
-            number_from_tiles(Tile::TopRight as u8
-                | Tile::TopLeft as u8
-                | Tile::Center as u8
-                | Tile::BottomRight as u8)
+            number_from_tiles(
+                Tile::TopRight as u8
+                    | Tile::TopLeft as u8
+                    | Tile::Center as u8
+                    | Tile::BottomRight as u8
+            )
         );
         assert_eq!(
             Some(5),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopLeft as u8
-                | Tile::Center as u8
-                | Tile::BottomRight as u8
-                | Tile::Bottom as u8)
+            number_from_tiles(
+                Tile::Top as u8
+                    | Tile::TopLeft as u8
+                    | Tile::Center as u8
+                    | Tile::BottomRight as u8
+                    | Tile::Bottom as u8
+            )
         );
         assert_eq!(
             Some(6),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopLeft as u8
-                | Tile::Center as u8
-                | Tile::BottomRight as u8
-                | Tile::BottomLeft as u8
-                | Tile::Bottom as u8)
+            number_from_tiles(
+                Tile::Top as u8
+                    | Tile::TopLeft as u8
+                    | Tile::Center as u8
+                    | Tile::BottomRight as u8
+                    | Tile::BottomLeft as u8
+                    | Tile::Bottom as u8
+            )
         );
 
         assert_eq!(
             Some(7),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopRight as u8
-                | Tile::BottomRight as u8)
+            number_from_tiles(Tile::Top as u8 | Tile::TopRight as u8 | Tile::BottomRight as u8)
         );
 
         assert_eq!(
             Some(8),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopLeft as u8
-                | Tile::TopRight as u8
-                | Tile::Center as u8
-                | Tile::BottomRight as u8
-                | Tile::BottomLeft as u8
-                | Tile::Bottom as u8)
+            number_from_tiles(
+                Tile::Top as u8
+                    | Tile::TopLeft as u8
+                    | Tile::TopRight as u8
+                    | Tile::Center as u8
+                    | Tile::BottomRight as u8
+                    | Tile::BottomLeft as u8
+                    | Tile::Bottom as u8
+            )
         );
 
         assert_eq!(
             Some(9),
-            number_from_tiles(Tile::Top as u8
-                | Tile::TopLeft as u8
-                | Tile::TopRight as u8
-                | Tile::Center as u8
-                | Tile::BottomRight as u8
-                | Tile::Bottom as u8)
+            number_from_tiles(
+                Tile::Top as u8
+                    | Tile::TopLeft as u8
+                    | Tile::TopRight as u8
+                    | Tile::Center as u8
+                    | Tile::BottomRight as u8
+                    | Tile::Bottom as u8
+            )
         );
     }
 }
