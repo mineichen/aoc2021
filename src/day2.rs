@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn part1() {
-        let test_input = File::open("puzzleData\\day2.txt").unwrap();
+        let test_input = File::open("puzzleData/day2.txt").unwrap();
         let pos = navigate_reader(test_input).unwrap();
         assert_eq!(1694130, pos.x * pos.y);
     }
@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     fn part2() {
-        let test_input = File::open("puzzleData\\day2.txt").unwrap();
+        let test_input = File::open("puzzleData/day2.txt").unwrap();
         let pos = navigate_reader_v2(test_input).unwrap();
         assert_eq!(1698850445, pos.x * pos.y);
     }

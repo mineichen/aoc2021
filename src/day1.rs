@@ -67,7 +67,7 @@ mod tests {
     fn input_part1() {
         assert_eq!(
             1688,
-            super::count_increments_in_file("puzzleData\\day1.txt").unwrap()
+            super::count_increments_in_file("puzzleData/day1.txt").unwrap()
         );
     }
     #[test]
@@ -84,7 +84,7 @@ mod tests {
     fn input_part2() {
         assert_eq!(
             1728,
-            super::count_window_increments_in_file("puzzleData\\day1.txt").unwrap()
+            super::count_window_increments_in_file("puzzleData/day1.txt").unwrap()
         )
     }
 }

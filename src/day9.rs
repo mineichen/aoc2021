@@ -116,7 +116,7 @@ mod tests {
     #[test]
     fn part1() {
         let puzzle = parse(std::fs::File::open("puzzleData/day9.txt").unwrap()).unwrap();
-        assert_eq!(15, puzzle.low_point_risk_level())
+        assert_eq!(458, puzzle.low_point_risk_level())
     }
     #[test]
     fn part1_test() {
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn part2() {
         let puzzle = parse(std::fs::File::open("puzzleData/day9.txt").unwrap()).unwrap();
-        assert_eq!(1134, puzzle.top_lake_sizes(3));
+        assert_eq!(1391940, puzzle.top_lake_sizes(3));
     }
 
     const TESTDATA: &'static str = "2199943210
