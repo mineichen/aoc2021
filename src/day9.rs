@@ -5,8 +5,8 @@ fn lows(m: &Matrix<u8>) -> impl Iterator<Item = (usize, usize)> + '_ {
     iproduct!(0..m.rows, 0..m.columns).filter(|k| m.neighbours(k, false).all(|n| m[&n] > m[k]))
 }
 
-fn calculate_risk_level(input: &str) -> u32 {    
-    let m = input.lines().map(|c| c.bytes()).collect();        
+fn calculate_risk_level(input: &str) -> u32 {
+    let m = input.lines().map(|c| c.bytes()).collect();
     lows(&m).map(|k| (m[&k] - b'0') as u32 + 1).sum::<u32>()
 }
 
@@ -35,7 +35,11 @@ mod tests {
     #[test]
     fn part1() {
         let mut buf = String::new();
-        std::fs::File::read_to_string(&mut std::fs::File::open("puzzleData/day9.txt").unwrap(), &mut buf).unwrap();
+        std::fs::File::read_to_string(
+            &mut std::fs::File::open("puzzleData/day9.txt").unwrap(),
+            &mut buf,
+        )
+        .unwrap();
         assert_eq!(458, calculate_risk_level(&buf));
     }
     #[test]
@@ -46,7 +50,11 @@ mod tests {
     #[test]
     fn part2_test() {
         let mut buf = String::new();
-        std::fs::File::read_to_string(&mut std::fs::File::open("puzzleData/day9.txt").unwrap(), &mut buf).unwrap();
+        std::fs::File::read_to_string(
+            &mut std::fs::File::open("puzzleData/day9.txt").unwrap(),
+            &mut buf,
+        )
+        .unwrap();
         assert_eq!(1391940, count_top_lake_tiles(&buf, 3));
     }
 
