@@ -50,11 +50,10 @@ impl<'a> TryFrom<&'a str> for Cave {
         if let Some(first_char) = value.chars().next() {
             Ok(Cave {
                 id: Rc::from(value),
-                t: if first_char.is_uppercase() {
-                    CaveType::Big
-                } else {
-                    CaveType::Small
-                },
+                t: first_char
+                    .is_uppercase()
+                    .then(|| CaveType::Big)
+                    .unwrap_or(CaveType::Small),
             })
         } else {
             Err(AocError::InvalidRowFormat)
