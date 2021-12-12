@@ -13,7 +13,7 @@ fn apply_neighbours(m: &mut Matrix<u8>) -> u64 {
                     })
                     .collect_vec()
             })
-            .count();
+            .count(); // consume somehow
         }
     }
     m.iter_mut()
@@ -33,9 +33,12 @@ fn count_flashes_for_100_steps(input: &str) -> u64 {
     (0..100).map(|_| apply_neighbours(&mut m)).sum::<u64>()
 }
 
-fn detect_first_flash_of_all_cylce(input: &str)-> u64 {
+fn detect_first_flash_of_all_cylce(input: &str) -> u64 {
     let mut m: Matrix<u8> = input.lines().map(|c| c.bytes().map(|x| x - b'0')).collect();
-    (1..).filter(|_| apply_neighbours(&mut m) == 100).next().unwrap() as u64
+    (1..)
+        .filter(|_| apply_neighbours(&mut m) == 100)
+        .next()
+        .unwrap() as u64
 }
 
 #[cfg(test)]
@@ -46,12 +49,7 @@ mod tests {
 
     #[test]
     fn part1() {
-        let mut buf = String::new();
-        std::fs::File::read_to_string(
-            &mut std::fs::File::open("puzzleData/day11.txt").unwrap(),
-            &mut buf,
-        )
-        .unwrap();
+        let buf = std::fs::read_to_string("puzzleData/day11.txt").unwrap();
         assert_eq!(1721, count_flashes_for_100_steps(&buf));
     }
     #[test]
@@ -61,12 +59,7 @@ mod tests {
 
     #[test]
     fn part2() {
-        let mut buf = String::new();
-        std::fs::File::read_to_string(
-            &mut std::fs::File::open("puzzleData/day11.txt").unwrap(),
-            &mut buf,
-        )
-        .unwrap();
+        let buf = std::fs::read_to_string("puzzleData/day11.txt").unwrap();
         assert_eq!(298, detect_first_flash_of_all_cylce(&buf));
     }
 

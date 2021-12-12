@@ -34,12 +34,7 @@ mod tests {
 
     #[test]
     fn part1() {
-        let mut buf = String::new();
-        std::fs::File::read_to_string(
-            &mut std::fs::File::open("puzzleData/day9.txt").unwrap(),
-            &mut buf,
-        )
-        .unwrap();
+        let buf = std::fs::read_to_string("puzzleData/day9.txt").unwrap();
         assert_eq!(458, calculate_risk_level(&buf));
     }
     #[test]
@@ -49,12 +44,7 @@ mod tests {
 
     #[test]
     fn part2_test() {
-        let mut buf = String::new();
-        std::fs::File::read_to_string(
-            &mut std::fs::File::open("puzzleData/day9.txt").unwrap(),
-            &mut buf,
-        )
-        .unwrap();
+        let buf = std::fs::read_to_string("puzzleData/day9.txt").unwrap();
         assert_eq!(1391940, count_top_lake_tiles(&buf, 3));
     }
 
