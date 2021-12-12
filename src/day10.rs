@@ -14,16 +14,16 @@ fn parse_line(input: &str) -> Result<(), Error> {
             i @ ('>' | ')' | '}' | ']') => match buf.pop() {
                 Some(x) => {
                     if x != i {
-                        Err(Error::CorruptLine(i))?
+                        return Err(Error::CorruptLine(i));
                     }
                 }
-                None => Err(Error::InvalidChar(i))?,
+                None => return Err(Error::InvalidChar(i)),
             },
-            a => Err(Error::InvalidChar(a))?,
+            a => return Err(Error::InvalidChar(a)),
         }
     }
-    if buf.len() != 0 {
-        Err(Error::Incomplete(buf))?;
+    if !buf.is_empty() {
+        return Err(Error::Incomplete(buf));
     }
 
     Ok(())
@@ -67,7 +67,7 @@ fn get_error_score_incomplete(r: impl Read) -> u64 {
             }
         })
         .collect_vec();
-    sorted.sort();
+    sorted.sort_unstable();
 
     sorted[sorted.len() / 2]
 }
@@ -87,10 +87,7 @@ pub enum Error {
 #[cfg(test)]
 mod tests {
 
-    
-
     use super::*;
-    
 
     #[test]
     fn part1() {

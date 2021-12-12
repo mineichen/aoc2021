@@ -1,27 +1,23 @@
 use std::{collections::HashMap, io::Read};
 
-use itertools::{process_results};
+use itertools::process_results;
 use simple_lines::ReadExt;
 
 fn count_unique(r: impl Read) -> Result<u32, Box<dyn std::error::Error>> {
     Ok(process_results(r.lines_rc(), |iter| {
         iter.map(|line| {
             line.split(" | ")
-                .skip(1)
-                .next()
+                .nth(1)
                 .expect("Invalid input contains no | ")
                 .split(' ')
-                .filter(|c| match c.len() {
-                    2 | 3 | 4 | 7 => true,
-                    _ => false,
-                })
+                .filter(|c| matches!(c.len(), 2 | 3 | 4 | 7))
                 .count() as u32
         })
         .sum::<u32>()
     })?)
 }
 
-const tiles: [u8; 10] = [
+const TILES: [u8; 10] = [
     Tile::Top as u8 //0
         | Tile::TopLeft as u8
         | Tile::TopRight as u8
@@ -80,7 +76,7 @@ enum Tile {
 }
 
 fn number_from_tiles(input: u8) -> Option<u8> {
-    tiles.iter().position(|x| *x == input).map(|x| x as u8)
+    TILES.iter().position(|x| *x == input).map(|x| x as u8)
 }
 
 fn solve(permutations: &str, input: &str) -> u64 {
@@ -112,29 +108,13 @@ fn solve(permutations: &str, input: &str) -> u64 {
         })
         .collect::<HashMap<_, _>>();
 
-    let top_right = one
-        .chars()
-        .filter(|c| !solutions.contains_key(c))
-        .next()
-        .unwrap();
+    let top_right = one.chars().find(|c| !solutions.contains_key(c)).unwrap();
     solutions.insert(top_right, Tile::TopRight);
-    let center_char = four
-        .chars()
-        .filter(|c| !solutions.contains_key(c))
-        .next()
-        .unwrap();
+    let center_char = four.chars().find(|c| !solutions.contains_key(c)).unwrap();
     solutions.insert(center_char, Tile::Center);
-    let top_char = seven
-        .chars()
-        .filter(|c| !solutions.contains_key(c))
-        .next()
-        .unwrap();
+    let top_char = seven.chars().find(|c| !solutions.contains_key(c)).unwrap();
     solutions.insert(top_char, Tile::Top);
-    let bottom_char = eight
-        .chars()
-        .filter(|c| !solutions.contains_key(c))
-        .next()
-        .unwrap();
+    let bottom_char = eight.chars().find(|c| !solutions.contains_key(c)).unwrap();
     solutions.insert(bottom_char, Tile::Bottom);
 
     input

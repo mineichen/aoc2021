@@ -1,16 +1,14 @@
 fn parse(input: &str) -> Result<Vec<i32>, Box<dyn std::error::Error>> {
-    let r: Result<Vec<_>, Box<dyn std::error::Error>> =
-        input.split(',').map(|e| Ok(e.parse()?)).collect();
-    Ok(r?)
+    input.split(',').map(|e| Ok(e.parse()?)).collect()
 }
 
-fn calc_fuel_for_position<'a>(mut positions: Vec<i32>) -> i32 {
-    positions.sort();
+fn calc_fuel_for_position(mut positions: Vec<i32>) -> i32 {
+    positions.sort_unstable();
     let pos = positions[positions.len() / 2];
     positions.into_iter().map(|x| (x - pos).abs()).sum::<i32>()
 }
 
-fn calc_fuel_for_position2<'a>(positions: Vec<i32>) -> i32 {
+fn calc_fuel_for_position2(positions: Vec<i32>) -> i32 {
     let pos = positions.iter().map(|a| *a as f32).sum::<f32>() / positions.len() as f32;
 
     [pos.ceil() as i32, pos.floor() as i32]

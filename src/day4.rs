@@ -8,7 +8,7 @@ use itertools::{process_results, Itertools};
 use simple_lines::ReadExt;
 
 fn parse(r: impl Read) -> Result<Game, Box<dyn std::error::Error>> {
-    Ok(process_results(r.lines_rc(), |mut lines| {
+    process_results(r.lines_rc(), |mut lines| {
         let numbers: Result<Vec<i32>, Box<dyn std::error::Error>> = lines
             .next()
             .ok_or(AocError::EmptyInput)?
@@ -21,24 +21,24 @@ fn parse(r: impl Read) -> Result<Game, Box<dyn std::error::Error>> {
             .skip(1)
             .batching(|it| {
                 let numbers: Result<Vec<i32>, Box<dyn std::error::Error>> = it
-                    .take_while(|line| line.trim().len() > 0)
+                    .take_while(|line| !line.trim().is_empty())
                     .flat_map(|line| {
                         line.split(' ')
                             .filter_map(|maybe_no| {
-                                (maybe_no.len() != 0).then(|| Ok(maybe_no.parse::<i32>()?))
+                                (!maybe_no.is_empty()).then(|| Ok(maybe_no.parse::<i32>()?))
                             })
                             .collect::<Vec<_>>()
                     })
                     .collect();
                 match numbers {
-                    Ok(numbers) => (numbers.len() > 0).then(|| Ok(Board { numbers })),
+                    Ok(numbers) => (!numbers.is_empty()).then(|| Ok(Board { numbers })),
                     Err(e) => Some(Err(e)),
                 }
             })
             .collect();
 
         Ok((numbers, boards?).into()) as Result<_, Box<dyn std::error::Error>>
-    })??)
+    })?
 }
 
 struct Board {
@@ -77,7 +77,7 @@ impl Game {
         let mut finish_states = vec![false; self.boards.len()];
         for number in extracted_numbers.into_iter() {
             for (pos, result) in self.play(number) {
-                if finish_states[pos] == false {
+                if !finish_states[pos] {
                     remaining_boards -= 1;
                     finish_states[pos] = true;
                     if remaining_boards == 0 {

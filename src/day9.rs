@@ -30,7 +30,6 @@ fn count_top_lake_tiles(input: &str, n: usize) -> usize {
 mod tests {
 
     use super::*;
-    
 
     #[test]
     fn part1() {

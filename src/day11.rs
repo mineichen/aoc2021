@@ -35,17 +35,13 @@ fn count_flashes_for_100_steps(input: &str) -> u64 {
 
 fn detect_first_flash_of_all_cylce(input: &str) -> u64 {
     let mut m: Matrix<u8> = input.lines().map(|c| c.bytes().map(|x| x - b'0')).collect();
-    (1..)
-        .filter(|_| apply_neighbours(&mut m) == 100)
-        .next()
-        .unwrap() as u64
+    (1..).find(|_| apply_neighbours(&mut m) == 100).unwrap() as u64
 }
 
 #[cfg(test)]
 mod tests {
 
     use super::*;
-    
 
     #[test]
     fn part1() {

@@ -36,7 +36,7 @@ impl FromStr for Command {
             "forward" => Ok(Command::Forward(number)),
             "up" => Ok(Command::Up(number)),
             "down" => Ok(Command::Down(number)),
-            _ => Err(Error::ParseCommand(command.to_owned()).into()),
+            _ => Err(Error::ParseCommand(command.to_owned())),
         }
     }
 }

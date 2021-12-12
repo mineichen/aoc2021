@@ -36,7 +36,7 @@ fn build_accumulator(
             match char {
                 '0' => continue,
                 '1' => *acc += 1,
-                _ => Err(Error::UnknownChar(char))?,
+                _ => return Err(Error::UnknownChar(char).into()),
             }
         }
     }
@@ -93,7 +93,7 @@ fn generate_rating(
         }
     });
     match result {
-        FoldWhile::Continue(_) => Err(Error::CalculateRatingFailed)?,
+        FoldWhile::Continue(_) => Err(Error::CalculateRatingFailed.into()),
         FoldWhile::Done(x) => Ok(*x
             .first()
             .expect("FoldWhile::Done only returns Done if slice.len() == 1")),
