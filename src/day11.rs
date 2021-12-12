@@ -45,7 +45,7 @@ fn detect_first_flash_of_all_cylce(input: &str) -> u64 {
 mod tests {
 
     use super::*;
-    use std::io::Read;
+    
 
     #[test]
     fn part1() {

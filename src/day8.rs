@@ -1,6 +1,6 @@
-use std::{collections::HashMap, io::Read, num::ParseIntError, str::FromStr};
+use std::{collections::HashMap, io::Read};
 
-use itertools::{process_results, Itertools};
+use itertools::{process_results};
 use simple_lines::ReadExt;
 
 fn count_unique(r: impl Read) -> Result<u32, Box<dyn std::error::Error>> {

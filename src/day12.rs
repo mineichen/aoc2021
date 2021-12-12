@@ -48,10 +48,6 @@ impl<'a> TryFrom<&'a str> for Cave {
 
     fn try_from(value: &'a str) -> Result<Self, Self::Error> {
         if let Some(first_char) = value.chars().next() {
-            if value == "HN" {
-                let a = 0;
-            }
-
             Ok(Cave {
                 id: Rc::from(value),
                 t: if first_char.is_uppercase() {

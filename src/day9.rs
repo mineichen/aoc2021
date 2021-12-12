@@ -30,7 +30,7 @@ fn count_top_lake_tiles(input: &str, n: usize) -> usize {
 mod tests {
 
     use super::*;
-    use std::io::Read;
+    
 
     #[test]
     fn part1() {

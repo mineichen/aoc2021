@@ -1,6 +1,6 @@
 use std::{io::Read, num::ParseIntError, str::FromStr};
 
-use itertools::{process_results, Itertools};
+use itertools::{process_results};
 use simple_lines::ReadExt;
 
 fn parse(r: impl Read) -> impl Iterator<Item = Result<Line, Box<dyn std::error::Error>>> {

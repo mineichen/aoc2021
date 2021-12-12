@@ -7,10 +7,10 @@ fn parse_line(input: &str) -> Result<(), Error> {
     let mut buf = vec![];
     for char in input.chars() {
         match char {
-            i @ '<' => buf.push('>'),
-            i @ '(' => buf.push(')'),
-            i @ '[' => buf.push(']'),
-            i @ '{' => buf.push('}'),
+            '<' => buf.push('>'),
+            '(' => buf.push(')'),
+            '[' => buf.push(']'),
+            '{' => buf.push('}'),
             i @ ('>' | ')' | '}' | ']') => match buf.pop() {
                 Some(x) => {
                     if x != i {
@@ -87,10 +87,10 @@ pub enum Error {
 #[cfg(test)]
 mod tests {
 
-    use simple_lines::ReadExt;
+    
 
     use super::*;
-    use std::io::Read;
+    
 
     #[test]
     fn part1() {

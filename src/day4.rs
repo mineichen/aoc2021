@@ -1,7 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
     io::Read,
-    rc::Rc,
 };
 
 use crate::utils::AocError;
@@ -26,7 +25,7 @@ fn parse(r: impl Read) -> Result<Game, Box<dyn std::error::Error>> {
                     .flat_map(|line| {
                         line.split(' ')
                             .filter_map(|maybe_no| {
-                                (!maybe_no.is_empty()).then(|| Ok(maybe_no.parse::<i32>()?))
+                                (maybe_no.len() != 0).then(|| Ok(maybe_no.parse::<i32>()?))
                             })
                             .collect::<Vec<_>>()
                     })
