@@ -1,6 +1,11 @@
-use itertools::{process_results};
+use itertools::process_results;
 use simple_lines::ReadExt;
-use std::{collections::{HashMap, HashSet}, io::Read, rc::Rc, borrow::Borrow};
+use std::{
+    borrow::Borrow,
+    collections::{HashMap, HashSet},
+    io::Read,
+    rc::Rc,
+};
 
 use crate::utils::AocError;
 
@@ -26,7 +31,7 @@ fn parse(m: impl Read) -> Result<CaveMap, Box<dyn std::error::Error>> {
                     CaveType::Big => a_entry.big.push(b.id),
                     CaveType::Small => a_entry.small.push(b.id),
                 };
-                
+
                 let b_entry = result.entry(b_id).or_default();
                 match a.t {
                     CaveType::Big => b_entry.big.push(a.id),
@@ -46,7 +51,7 @@ impl<'a> TryFrom<&'a str> for Cave {
             if value == "HN" {
                 let a = 0;
             }
-            
+
             Ok(Cave {
                 id: Rc::from(value),
                 t: if first_char.is_uppercase() {
@@ -80,22 +85,28 @@ struct CaveReferences {
 }
 
 fn count_paths(map: CaveMap, allow_single_double_visit: bool) -> u64 {
-    let mut queue = vec!((Rc::<str>::from("start"), HashSet::<Rc::<str>>::new(), allow_single_double_visit));
+    let mut queue = vec![(
+        Rc::<str>::from("start"),
+        HashSet::<Rc<str>>::new(),
+        allow_single_double_visit,
+    )];
     let mut solutions = 0;
     while let Some((cur_id, visited, allow_double)) = queue.pop() {
         let cur = &map[&cur_id];
         for small in cur.small.iter() {
             let borrow: &str = small.borrow();
-            let visit_already = visited.contains(small);
-                
+
             if borrow == "end" {
                 //println!("{:?}", visited);
                 solutions += 1;
-            } else if !visit_already || allow_double && borrow != "start" {
-                let mut clone = visited.clone();
-                clone.insert(cur_id.clone());
-                queue.push((Rc::clone(small), clone, allow_double && !visit_already));
-            }            
+            } else {
+                let visit_already = visited.contains(small);
+                if !visit_already || allow_double && borrow != "start" {
+                    let mut clone = visited.clone();
+                    clone.insert(cur_id.clone());
+                    queue.push((Rc::clone(small), clone, allow_double && !visit_already));
+                }
+            }
         }
         for big in cur.big.iter() {
             let mut clone = visited.clone();
@@ -122,7 +133,7 @@ mod tests {
     }
 
     #[test]
-    fn part2() {
+    fn part2_real() {
         let map = parse(std::fs::File::open("puzzleData/day12.txt").unwrap()).unwrap();
         assert_eq!(92111, count_paths(map, true));
     }
