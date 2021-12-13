@@ -1,24 +1,26 @@
-use std::{io::Read};
+use std::io::Read;
 
 use simple_lines::ReadExt;
 
 use crate::utils::AocError;
 
-
-fn parse(r: impl Read) -> Result<(Vec<(i64, i64)>, Vec<FoldInstruction>), Box<dyn std::error::Error>> {
+type ParseOk = (Vec<(i64, i64)>, Vec<FoldInstruction>);
+fn parse(r: impl Read) -> Result<ParseOk, Box<dyn std::error::Error>> {
     let mut lines = r.lines_rc();
     let map: Result<Vec<_>, Box<dyn std::error::Error>> = lines
         .by_ref()
         .take_while(|x| match x {
             Ok(ok) => !ok.is_empty(),
-            Err(_) => true
-        }).map(|line| {
+            Err(_) => true,
+        })
+        .map(|line| {
             let line = line?;
             let mut parts = line.split(',');
             let x = parts.next().ok_or(AocError::InvalidRowFormat)?.parse()?;
             let y = parts.next().ok_or(AocError::InvalidRowFormat)?.parse()?;
             Ok((x, y))
-        }).collect();
+        })
+        .collect();
     let map = map?;
 
     let instructions: Result<Vec<_>, Box<dyn std::error::Error>> = lines
@@ -30,7 +32,7 @@ fn parse(r: impl Read) -> Result<(Vec<(i64, i64)>, Vec<FoldInstruction>), Box<dy
             Ok(match instruction {
                 'x' => FoldInstruction::X(nr),
                 'y' => FoldInstruction::Y(nr),
-                _ => return Err(AocError::InvalidRowFormat.into())
+                _ => return Err(AocError::InvalidRowFormat.into()),
             })
         })
         .collect();
@@ -40,18 +42,15 @@ fn parse(r: impl Read) -> Result<(Vec<(i64, i64)>, Vec<FoldInstruction>), Box<dy
 
 fn apply_instructions(map: &mut Vec<(i64, i64)>, instructions: &[FoldInstruction]) {
     for instr in instructions {
-        map.iter_mut().for_each(|(x, y)| {
-            
-            match instr {
-                FoldInstruction::X(x_fold) => {
-                    if *x > *x_fold {
-                        *x = 2*x_fold - *x;
-                    }
-                },
-                FoldInstruction::Y(y_fold) => {
-                    if *y > *y_fold { 
-                        *y = 2*y_fold - *y;
-                    }
+        map.iter_mut().for_each(|(x, y)| match instr {
+            FoldInstruction::X(x_fold) => {
+                if *x > *x_fold {
+                    *x = 2 * x_fold - *x;
+                }
+            }
+            FoldInstruction::Y(y_fold) => {
+                if *y > *y_fold {
+                    *y = 2 * y_fold - *y;
                 }
             }
         });
@@ -60,7 +59,7 @@ fn apply_instructions(map: &mut Vec<(i64, i64)>, instructions: &[FoldInstruction
 
 enum FoldInstruction {
     X(i64),
-    Y(i64)
+    Y(i64),
 }
 
 #[cfg(test)]
@@ -70,7 +69,8 @@ mod tests {
 
     #[test]
     fn part1() {
-        let (mut map, instructions) = parse(std::fs::File::open("puzzleData/day13.txt").unwrap()).unwrap();
+        let (mut map, instructions) =
+            parse(std::fs::File::open("puzzleData/day13.txt").unwrap()).unwrap();
         apply_instructions(&mut map, &instructions[0..1]);
         assert_eq!(706, map.into_iter().collect::<HashSet<_>>().len() as i64);
     }
@@ -84,13 +84,16 @@ mod tests {
 
     #[test]
     fn part2() {
-        let (mut map, instructions) = parse(std::fs::File::open("puzzleData/day13.txt").unwrap()).unwrap();
+        let (mut map, instructions) =
+            parse(std::fs::File::open("puzzleData/day13.txt").unwrap()).unwrap();
         apply_instructions(&mut map, &instructions);
-        let (max_x, max_y) = map.iter().fold((0, 0), |(acc_x, acc_y), (x, y)| (acc_x.max(*x as usize), acc_y.max(*y as usize)));
+        let (max_x, max_y) = map.iter().fold((0, 0), |(acc_x, acc_y), (x, y)| {
+            (acc_x.max(*x as usize), acc_y.max(*y as usize))
+        });
         let (width, height) = (max_x + 2, max_y + 1);
-        let mut coords = vec!(b'.'; width * height);
+        let mut coords = vec![b'.'; width * height];
         for (x, y) in map {
-            coords[x as usize + y as usize* width] = b'#';
+            coords[x as usize + y as usize * width] = b'#';
         }
         for y in 1..height {
             coords[y * width - 1] = b'\n';
@@ -98,9 +101,8 @@ mod tests {
         let out = std::str::from_utf8(coords.as_slice()).unwrap();
         assert_eq!("#....###..####...##.###....##.####.#..#\n#....#..#.#.......#.#..#....#.#....#..#\n#....#..#.###.....#.###.....#.###..####\n#....###..#.......#.#..#....#.#....#..#\n#....#.#..#....#..#.#..#.#..#.#....#..#\n####.#..#.#.....##..###...##..####.#..#.", out);
         // println!("{}", std::str::from_utf8(coords.as_slice()).unwrap());
-
     }
-const TEST_INPUT : &'static str = "6,10
+    const TEST_INPUT: &'static str = "6,10
 0,14
 9,10
 0,3

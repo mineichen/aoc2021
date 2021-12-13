@@ -46,6 +46,7 @@ pub fn count_increments_in_file_collect(path: &str) -> Result<usize, Box<dyn std
 pub fn count_increments_in_file(path: &str) -> Result<usize, Box<dyn std::error::Error>> {
     let file = File::open(path)?;
     let numbers = file.lines_rc().map(|line| Ok(line?.parse()?));
+    #[allow(clippy::redundant_closure)]
     process_results(numbers, |iter| count_increments(iter))
 }
 
@@ -57,6 +58,7 @@ pub fn count_window_increments(input: impl IntoIterator<Item = usize>) -> usize 
 pub fn count_window_increments_in_file(path: &str) -> Result<usize, Box<dyn std::error::Error>> {
     let file = File::open(path)?;
     let numbers = file.lines_rc().map(|line| Ok(line?.parse()?));
+    #[allow(clippy::redundant_closure)]
     process_results(numbers, |iter| count_window_increments(iter))
 }
 

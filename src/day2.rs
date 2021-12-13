@@ -63,6 +63,7 @@ fn navigate(input: impl Iterator<Item = Command>) -> Position {
 
 fn navigate_reader(input: impl Read) -> Result<Position, Box<dyn std::error::Error>> {
     let data = input.lines_rc().map(|x| Ok(x?.parse()?));
+    #[allow(clippy::redundant_closure)]
     process_results(data, |iter| navigate(iter))
 }
 
@@ -90,6 +91,7 @@ fn navigate_v2(input: impl Iterator<Item = Command>) -> PositionV2 {
 
 fn navigate_reader_v2(input: impl Read) -> Result<PositionV2, Box<dyn std::error::Error>> {
     let data = input.lines_rc().map(|x| Ok(x?.parse()?));
+    #[allow(clippy::redundant_closure)]
     process_results(data, |iter| navigate_v2(iter))
 }
 
