@@ -1,4 +1,4 @@
-use std::{io::Read, collections::HashSet};
+use std::{io::Read};
 
 use simple_lines::ReadExt;
 
@@ -38,7 +38,7 @@ fn parse(r: impl Read) -> Result<(Vec<(i64, i64)>, Vec<FoldInstruction>), Box<dy
     Ok((map, instructions?))
 }
 
-fn count_dots(mut map: Vec<(i64, i64)>, instructions: &[FoldInstruction]) -> i64 {
+fn apply_instructions(map: &mut Vec<(i64, i64)>, instructions: &[FoldInstruction]) {
     for instr in instructions {
         map.iter_mut().for_each(|(x, y)| {
             
@@ -56,7 +56,6 @@ fn count_dots(mut map: Vec<(i64, i64)>, instructions: &[FoldInstruction]) -> i64
             }
         });
     }
-    map.into_iter().collect::<HashSet<_>>().len() as i64
 }
 
 enum FoldInstruction {
@@ -67,17 +66,39 @@ enum FoldInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::HashSet;
 
     #[test]
     fn part1() {
-        let (map, instructions) = parse(std::fs::File::open("puzzleData/day13.txt").unwrap()).unwrap();
-        assert_eq!(706, count_dots(map, &instructions[0..1]));
+        let (mut map, instructions) = parse(std::fs::File::open("puzzleData/day13.txt").unwrap()).unwrap();
+        apply_instructions(&mut map, &instructions[0..1]);
+        assert_eq!(706, map.into_iter().collect::<HashSet<_>>().len() as i64);
     }
 
     #[test]
     fn part1_test() {
-        let (map, instructions) = parse(std::io::Cursor::new(TEST_INPUT)).unwrap();
-        assert_eq!(17, count_dots(map, &instructions[0..1]));
+        let (mut map, instructions) = parse(std::io::Cursor::new(TEST_INPUT)).unwrap();
+        apply_instructions(&mut map, &instructions[0..1]);
+        assert_eq!(17, map.into_iter().collect::<HashSet<_>>().len() as i64);
+    }
+
+    #[test]
+    fn part2() {
+        let (mut map, instructions) = parse(std::fs::File::open("puzzleData/day13.txt").unwrap()).unwrap();
+        apply_instructions(&mut map, &instructions);
+        let (max_x, max_y) = map.iter().fold((0, 0), |(acc_x, acc_y), (x, y)| (acc_x.max(*x as usize), acc_y.max(*y as usize)));
+        let (width, height) = (max_x + 2, max_y + 1);
+        let mut coords = vec!(b'.'; width * height);
+        for (x, y) in map {
+            coords[x as usize + y as usize* width] = b'#';
+        }
+        for y in 1..height {
+            coords[y * width - 1] = b'\n';
+        }
+        let out = std::str::from_utf8(coords.as_slice()).unwrap();
+        assert_eq!("#....###..####...##.###....##.####.#..#\n#....#..#.#.......#.#..#....#.#....#..#\n#....#..#.###.....#.###.....#.###..####\n#....###..#.......#.#..#....#.#....#..#\n#....#.#..#....#..#.#..#.#..#.#....#..#\n####.#..#.#.....##..###...##..####.#..#.", out);
+        // println!("{}", std::str::from_utf8(coords.as_slice()).unwrap());
+
     }
 const TEST_INPUT : &'static str = "6,10
 0,14
