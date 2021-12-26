@@ -3,7 +3,9 @@ use simple_lines::ReadExt;
 use std::{collections::HashMap, io::Read};
 
 use crate::{utils::AocError, DynError};
-fn parse(input: impl Read) -> Result<(Vec<ListItem>, Vec<((u8, u8), u8)>, u8), DynError> {
+type ParseResult = Result<(Vec<ListItem>, Vec<((u8, u8), u8)>, u8), DynError>;
+
+fn parse(input: impl Read) -> ParseResult {
     let mut known = HashMap::new();
     let mut lines = input.lines_rc();
     let initial = lines
