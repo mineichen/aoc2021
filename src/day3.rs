@@ -45,6 +45,7 @@ fn build_accumulator(
 
 fn parse(r: impl Read) -> Result<FuelStats, Box<dyn std::error::Error>> {
     let lines = r.lines_rc();
+    #[allow(clippy::redundant_closure)]
     let (count, accumulator) = process_results(lines, |nrs| build_accumulator(nrs))??;
 
     let half_count = count / 2;
