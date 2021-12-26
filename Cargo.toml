@@ -11,4 +11,4 @@ debug = true
 simple_lines = "0.0.1"
 itertools = "0.10.1"
 thiserror = "1"
-pathfinding = "2.2"
+pathfinding = "3.0.5"

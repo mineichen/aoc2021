@@ -3,11 +3,11 @@ use pathfinding::prelude::{bfs_reach, Matrix};
 
 fn apply_neighbours(m: &mut Matrix<u8>) -> u64 {
     for k in iproduct!(0..m.rows, 0..m.columns) {
-        m[&k] += 1;
-        if m[&k] == 10 {
-            bfs_reach(k, |n| {
+        m[k] += 1;
+        if m[k] == 10 {
+            bfs_reach(k, |&n| {
                 m.neighbours(n, true)
-                    .filter(|k| {
+                    .filter(|&k| {
                         m[k] += 1;
                         m[k] == 10
                     })
